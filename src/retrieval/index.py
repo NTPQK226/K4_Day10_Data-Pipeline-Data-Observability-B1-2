@@ -47,19 +47,19 @@ class LocalEmbeddingIndex:
         for index, row in enumerate(records):
             documents.append(
                 {
-                    "record_id": f"{row.get('paper_id', '')}::{index}",
-                    "paper_id": str(row.get("paper_id", "") or ""),
-                    "title": str(row.get("title", "") or ""),
-                    "content": str(row.get("text_for_embedding", "") or ""),
+                    "record_id": f"{row['paper_id']}::{index}",
+                    "paper_id": row["paper_id"],
+                    "title": row["title"],
+                    "content": row["text_for_embedding"],
                     "metadata": {
-                        "paper_id": str(row.get("paper_id", "")) if pd.notna(row.get("paper_id")) else "",
-                        "title": str(row.get("title", "")) if pd.notna(row.get("title")) else "",
-                        "published": str(row.get("published", "")) if pd.notna(row.get("published")) else "",
-                        "authors_joined": str(row.get("authors_joined", "")) if pd.notna(row.get("authors_joined")) else "",
-                        "categories_joined": str(row.get("categories_joined", "")) if pd.notna(row.get("categories_joined")) else "",
-                        "summary": str(row.get("summary", "")) if pd.notna(row.get("summary")) else "",
-                        "abs_url": str(row.get("abs_url", "")) if pd.notna(row.get("abs_url")) else "",
-                        "pdf_url": str(row.get("pdf_url", "")) if pd.notna(row.get("pdf_url")) else "",
+                        "paper_id": row["paper_id"],
+                        "title": row["title"],
+                        "published": row["published"],
+                        "authors_joined": row["authors_joined"],
+                        "categories_joined": row["categories_joined"],
+                        "summary": row["summary"],
+                        "abs_url": row["abs_url"],
+                        "pdf_url": row["pdf_url"],
                     },
                 }
             )
