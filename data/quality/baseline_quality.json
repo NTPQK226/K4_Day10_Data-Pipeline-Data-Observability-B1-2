@@ -1,0 +1,46 @@
+{
+  "report_name": "baseline_quality",
+  "total_rows": 24,
+  "checks_total": 6,
+  "checks_passed": 6,
+  "checks_failed": 0,
+  "all_passed": true,
+  "checks": [
+    {
+      "check": "row_count",
+      "value": 24,
+      "passed": true,
+      "detail": "24 rows in dataset"
+    },
+    {
+      "check": "paper_id_not_null",
+      "value": 0,
+      "passed": true,
+      "detail": "0 rows with null paper_id"
+    },
+    {
+      "check": "paper_id_unique",
+      "value": 0,
+      "passed": true,
+      "detail": "0 duplicate paper_id rows"
+    },
+    {
+      "check": "title_not_null",
+      "value": 0,
+      "passed": true,
+      "detail": "0 rows with null title"
+    },
+    {
+      "check": "summary_not_blank",
+      "value": 0,
+      "passed": true,
+      "detail": "0 rows with summary shorter than 50 chars"
+    },
+    {
+      "check": "freshness_age_days",
+      "value": 0,
+      "passed": true,
+      "detail": "0 rows (0.0%) older than 180 days"
+    }
+  ]
+}
