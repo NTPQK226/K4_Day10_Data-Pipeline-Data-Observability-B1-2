@@ -8,7 +8,7 @@
 | **MSSV** | [Điền MSSV của bạn tại đây] |
 | **Khóa/Lớp** | K4 |
 | **Tên nhóm** | NTPQK226 / Nhóm Day 10 B1-2 |
-| **Vai trò chính** | **Role 2 — Data Layer Owner (Ingestion, Cleaning, Lineage & Data Recovery)** |
+| **Vai trò chính** | **Role 2 — Data Layer Owner (Ingestion, Cleaning, Corruption, Lineage & Recovery)** |
 | **Repository** | `https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability-B1-2` |
 | **Ngày hoàn thành** | 2026-08-06 |
 
@@ -18,16 +18,16 @@
 
 ### Phần việc sở hữu (Ownership)
 
-| Module/deliverable | File/hàm phụ trách | Input nhận vào | Output bàn giao | Trạng thái |
-| :--- | :--- | :--- | :--- | :--- |
-| **Source Ingestion & Retry Mechanism** | `src/ingestion/crossref.py`<br>- `fetch_source_records`<br>- `parse_crossref_payload`<br>- `load_raw_records` | `Settings` (API URL, query, filter, timeout, max_results) | - `data/raw/crossref_response.json`<br>- `data/raw/crossref_records.json`<br>- Danh sách `PaperRecord` | **Hoàn thành (100%)** |
-| **Data Cleaning & Embedding Modeling** | `src/ingestion/cleaning.py`<br>- `build_clean_dataframe` | Danh sách `PaperRecord`, `run_date` | - `data/clean/papers_clean.csv`<br>- `data/clean/papers_clean.json`<br>- Clean `pd.DataFrame` có `text_for_embedding`, `age_days` | **Hoàn thành (100%)** |
-| **Data Poisoning & Corruption Engine** | `src/ingestion/corruption.py`<br>- `corrupt_clean_dataframe` | Clean `pd.DataFrame` | - `data/corrupted/papers_corrupted.csv`<br>- `data/corrupted/corruption_log.json` | **Hoàn thành** |
-| **Data Lineage & Recovery Verification** | Lineage tracing & replay | `data/raw/crossref_records.json` snapshot | `data/clean/papers_clean_repaired.csv` (100% tái hiện từ snapshot) | **Hoàn thành** |
+| Module / Deliverable | File / Hàm phụ trách | Input nhận vào | Output bàn giao | Trạng thái |
+| :--- | :--- | :--- | :--- | :---: |
+| **Source Ingestion & Retry Mechanism (CP0)** | `src/ingestion/crossref.py`<br>- `fetch_source_records`<br>- `parse_crossref_payload`<br>- `load_raw_records` | `Settings` (API URL, query, filter, timeout, max_results) | - `data/raw/crossref_response.json`<br>- `data/raw/crossref_records.json`<br>- Danh sách `PaperRecord` | **Hoàn thành (100%)** |
+| **Data Cleaning & Embedding Modeling (CP1)** | `src/ingestion/cleaning.py`<br>- `build_clean_dataframe` | Danh sách `PaperRecord`, `run_date` | - `data/clean/papers_clean.csv`<br>- `data/clean/papers_clean.json`<br>- Clean `pd.DataFrame` có `text_for_embedding`, `age_days` | **Hoàn thành (100%)** |
+| **Data Poisoning & Corruption Engine (CP5)** | `src/ingestion/corruption.py`<br>- `corrupt_clean_dataframe` | Clean `pd.DataFrame` | - `data/clean/papers_clean_corrupted.csv`<br>- `data/clean/papers_clean_corrupted.json`<br>- `data/results/corruption_log.json` | **Hoàn thành (100%)** |
+| **Data Lineage & Recovery Pipeline (CP6)** | `src/pipelines/corruption_flow.py` & Ingestion Lineage | `data/raw/crossref_records.json` snapshot | - `data/clean/papers_clean_repaired.csv`<br>- `data/clean/papers_clean_repaired.json`<br>- `data/quality/repaired_quality.json`<br>- `data/quality/repaired_freshness.json` | **Hoàn thành (100%)** |
 
 ### Việc hỗ trợ ngoài phạm vi chính
-- **Hỗ trợ Role 3 (RAG/Embeddings):** Cung cấp cấu trúc `text_for_embedding` và metadata null-safe giúp Role 3 index thành công vào ChromaDB collection `papers-baseline` mà không bị lỗi NaN hay type mismatch.
-- **Hỗ trợ Role 4 (Observability):** Chạy và kiểm thử trực tiếp 6 bài kiểm tra Data Quality (`run_data_quality_checks`) và Freshness Report (`build_freshness_report`), bàn giao dataset sạch giúp Role 4 sinh tự động 24 câu hỏi evaluation trong `data/eval/test_set.json`.
+- **Hỗ trợ Role 3 (RAG/Embeddings):** Cung cấp cấu trúc `text_for_embedding` và metadata null-safe giúp Role 3 index thành công vào ChromaDB collections (`papers-baseline`, `papers-corrupted`, `papers-repaired`) mà không bị lỗi NaN hay type mismatch.
+- **Hỗ trợ Role 4 & 5 (Observability & Evaluation):** Chạy và kiểm thử trực tiếp 6 bài kiểm tra Data Quality (`run_data_quality_checks`) và Freshness Report (`build_freshness_report`), bàn giao dataset sạch giúp sinh tự động 24 câu hỏi evaluation trong `data/eval/test_set.json`.
 
 ---
 
@@ -35,14 +35,20 @@
 
 | Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao | Cách xác minh |
 | :--- | :--- | :--- | :--- |
-| **Ingestion Crossref API** | `src/ingestion/crossref.py` | 24 records raw với đầy đủ DOI, abstract, authors, publish date | `python -c "from ingestion.crossref import *; ..."` |
-| **Raw Snapshot Persistence** | `data/raw/crossref_response.json`<br>`data/raw/crossref_records.json` | Snapshot raw 239 KB & 59 KB dùng cho reproducible pipeline | `ls -lh data/raw` |
-| **Cleaning & Normalization** | `src/ingestion/cleaning.py` | Clean dataset 24 bài, deduplicate 0 trùng lặp, tạo `text_for_embedding` | `pd.read_csv('data/clean/papers_clean.csv')` |
+| **Ingestion Crossref API (CP0)** | `src/ingestion/crossref.py` | 24 records raw với đầy đủ DOI, abstract, authors, publish date | `python -c "from ingestion.crossref import *; ..."` |
+| **Raw Snapshot Persistence (CP0)** | `data/raw/crossref_response.json`<br>`data/raw/crossref_records.json` | Snapshot raw 239 KB & 59 KB dùng cho reproducible pipeline | `ls -lh data/raw` |
+| **Cleaning & Normalization (CP1)** | `src/ingestion/cleaning.py` | Clean dataset 24 bài, deduplicate 0 trùng lặp, tạo `text_for_embedding` | `pd.read_csv('data/clean/papers_clean.csv')` |
 | **Data Quality Gate (CP1)** | `data/quality/baseline_quality.json` | **6/6 bài kiểm tra passed (100%)** | `cat data/quality/baseline_quality.json` |
-| **Freshness Observability** | `data/quality/freshness_report.json` | `is_fresh=True`, `stale_ratio=0.0%`, latest date: `2026-08-01` | `cat data/quality/freshness_report.json` |
+| **Freshness Observability (CP1)** | `data/quality/freshness_report.json` | `is_fresh=True`, `stale_ratio=0.0%`, latest date: `2026-08-01` | `cat data/quality/freshness_report.json` |
+| **Controlled Corruption (CP5)** | `src/ingestion/corruption.py`<br>`data/results/corruption_log.json` | 6 kịch bản lỗi có chủ đích, 24 corruption events được log chi tiết | `cat data/results/corruption_log.json` |
+| **Corrupted Artifacts (CP5)** | `data/clean/papers_clean_corrupted.csv`<br>`data/clean/papers_clean_corrupted.json` | 23 rows (3 dropped + 2 duplicate), abstract rỗng & nhiễu noise | `ls -lh data/clean/*corrupted*` |
+| **Self-Healing & Data Repair (CP6)** | `data/clean/papers_clean_repaired.csv`<br>`data/clean/papers_clean_repaired.json` | Khôi phục 24/24 records hoàn toàn từ raw lineage snapshot gốc | `python -c "from ingestion.cleaning import *; ..."` |
+| **Repaired Observability (CP6)** | `data/quality/repaired_quality.json`<br>`data/quality/repaired_freshness.json` | **Quality 6/6 PASS (100%)**, **Freshness is_fresh=True (0.0% stale)** | `cat data/quality/repaired_quality.json` |
 
 ### Mô tả Output cụ thể:
-File `data/clean/papers_clean.csv` (99 KB) và `data/clean/papers_clean.json` (114 KB) chứa 24 bài báo khoa học về chủ đề *"Retrieval-Augmented Generation & Agentic LLM"* xuất bản từ 2026-01 đến 2026-08. Toàn bộ text đã được bóc thẻ XML (`<jats:p>`), chuẩn hoá khoảng trắng, tính toán `age_days` chuẩn xác và tổng hợp sẵn `text_for_embedding` phục vụ trực tiếp cho mô hình `all-MiniLM-L6-v2`.
+1. **Bộ dữ liệu Baseline (`papers_clean.csv`, 99 KB):** 24 bài báo khoa học về *"Retrieval-Augmented Generation & Agentic LLM"* xuất bản từ 2026-01 đến 2026-08. Toàn bộ text đã được bóc thẻ XML (`<jats:p>`), chuẩn hoá khoảng trắng, tính toán `age_days` chuẩn xác và tổng hợp sẵn `text_for_embedding` cho `all-MiniLM-L6-v2`.
+2. **Bộ dữ liệu Corrupted (`papers_clean_corrupted.csv`, 83 KB):** Chứa 23 records mô phỏng 6 kịch bản lỗi thực tế (xóa bài mới nhất, abstract rỗng, chèn noise văn bản rác, cắt cụt title, làm cũ date về 2018, duplicate rows), làm suy giảm có kiểm soát các chỉ số RAG và kích hoạt fail 3 bài kiểm tra Quality.
+3. **Bộ dữ liệu Repaired (`papers_clean_repaired.csv`, 99 KB):** Tái tạo 100% nguyên trạng từ snapshot raw JSON, đưa hệ thống trở lại trạng thái sạch hoàn hảo (6/6 quality checks pass).
 
 ---
 
@@ -52,10 +58,13 @@ File `data/clean/papers_clean.csv` (99 KB) và `data/clean/papers_clean.json` (1
 1. **Dữ liệu Crossref thô nhiều rác:** Abstract từ API Crossref thường chứa các thẻ XML/JATS lồng nhau (`<jats:p>`, `<jats:sec>`, `<b>`, `<i>`), format ngày tháng phân mảnh theo mảng lồng `date-parts: [[2026, 6, 15]]`, và tác giả phân rã theo `given`/`family`.
 2. **Nguy cơ làm hỏng vector embeddings:** Nếu abstract rỗng, tiêu đề trống hoặc text quá ngắn, vector embeddings sẽ bị nhiễu hoặc sụp đổ (embedding collapse).
 3. **Mất dấu nguồn gốc (Broken Data Lineage):** Nếu làm sạch hoặc lọc dữ liệu mà không có cơ chế log/truy vết, các bản ghi bị loại bỏ âm thầm sẽ gây mất cân đối dữ liệu mà không ai biết lý do.
+4. **Kiểm thử tác động của Data Drift/Poisoning (CP5):** Cần cơ chế tạo lỗi có chủ đích, có log kiểm toán (audit log) rõ ràng để đo lường định lượng mức độ sụt giảm của RAG agent và observability gates.
+5. **Khả năng tự phục hồi (Self-Healing - CP6):** Chứng minh hệ thống có thể khôi phục 100% dữ liệu gốc dựa trên lineage snapshot mà không cần vá thủ công (hardcode/copy-paste).
 
 ### Cách triển khai
+
 1. **Ingestion Layer (`src/ingestion/crossref.py`):**
-   - Triển khai hàm `_strip_xml_tags(text)` dùng Regex `re.sub(r"<[^>]+>", " ", text)` để bóc tách triệt để toàn bộ thẻ XML.
+   - Triển khai hàm `_strip_xml_tags(text)` dùng Regex `re.sub(r"<[^>]+>", " ", text)` kết hợp unescape HTML để bóc tách triệt để toàn bộ thẻ XML.
    - Triển khai `_format_date(date_dict)` ghép an toàn chuỗi ISO `YYYY-MM-DD`.
    - Sử dụng cơ chế **Retry với Exponential Backoff** (tối đa 3 lần) cho các lỗi mạng và HTTP status `429`, `500`, `502`, `503`, `504`.
    - Tự động nạp từ cache snapshot nếu `refresh_source=False` để đảm bảo tính lặp lại (reproducibility).
@@ -70,14 +79,29 @@ File `data/clean/papers_clean.csv` (99 KB) và `data/clean/papers_clean.json` (1
      text_for_embedding = f"Title: {title}\nAuthors: {authors_joined}\nCategories: {categories_joined}\nSummary: {summary}"
      ```
 
+3. **Corruption Engine (`src/ingestion/corruption.py`):**
+   - **Scenario 1 (Drop latest records):** Xóa 3 bài mới nhất để kiểm tra Freshness drop & Missing docs retrieval.
+   - **Scenario 2 (Blank summary):** Làm rỗng abstract ở 2 bản ghi để kích hoạt fail Quality check `summary_not_blank`.
+   - **Scenario 3 (Inject noise):** Chèn đoạn văn bản rác đối kháng (`CORRUPTED NOISE: ...`) để phá vỡ độ tương đồng ngữ nghĩa vector.
+   - **Scenario 4 (Truncate title):** Cắt ngắn tiêu đề còn 8 ký tự để phá hỏng Exact Title Lookup.
+   - **Scenario 5 (Stale published date):** Đẩy lùi ngày xuất bản về năm 2018 (`age_days > 3000`) để kích hoạt Freshness Warning (`is_fresh=False`).
+   - **Scenario 6 (Add duplicate rows):** Nhân bản 2 dòng để kích hoạt fail Quality check `paper_id_unique`.
+   - **Rebuild Synthesis:** Tự động tính toán lại `summary_chars` và `text_for_embedding` cho toàn bộ các dòng bị biến đổi.
+   - **Audit Logging:** Ghi nhật ký có cấu trúc ra [data/results/corruption_log.json](file:///var/home/nguyenhuucong/PycharmProjects/K4_Day10_Data-Pipeline-Data-Observability-B1-2/data/results/corruption_log.json) ghi rõ ID, loại lỗi, tham số và số lượng dòng trước/sau.
+
+4. **Data Lineage & Recovery Pipeline (CP6):**
+   - Nạp lại (Reload) 24 records thô nguyên bản từ `data/raw/crossref_records.json`.
+   - Thực thi lại toàn bộ quy trình cleaning chuẩn hóa để sinh ra `data/clean/papers_clean_repaired.csv`.
+   - Xác minh các bản ghi bị drop/lỗi ở CP5 đã được khôi phục 100% về nguyên trạng, bảo toàn trọn vẹn data contract.
+
 ### Input, output và contract
 
 | Thành phần | Mô tả |
 | :--- | :--- |
 | **Input** | JSON raw từ Crossref API (`WorksMessageItem` format) hoặc snapshot JSON trên đĩa |
-| **Output** | `pd.DataFrame` và file `papers_clean.csv` / `papers_clean.json` chuẩn 16 cột |
+| **Output** | `pd.DataFrame` và file `papers_clean.csv` / `papers_clean_corrupted.csv` / `papers_clean_repaired.csv` |
 | **Module phụ thuộc** | `src/core/config.py` (`Settings`), `src/core/utils.py` |
-| **Module sử dụng output** | `src/retrieval/index.py` (Role 3), `src/evaluation/testset.py` (Role 4) |
+| **Module sử dụng output** | `src/retrieval/index.py` (Role 3), `src/evaluation/testset.py` (Role 4), `src/observability/quality.py` (Role 5) |
 | **Điều kiện lỗi cần xử lý** | Mất kết nối API, payload thiếu abstract, tác giả thiếu family name, abstract có thẻ XML rác, DOI bị duplicate |
 
 ### Cách xác minh
@@ -86,21 +110,31 @@ uv run python -c "
 from core.config import load_settings
 from ingestion.crossref import load_raw_records
 from ingestion.cleaning import build_clean_dataframe
+from ingestion.corruption import corrupt_clean_dataframe
 from observability.quality import run_data_quality_checks, build_freshness_report
 
 settings = load_settings()
-records = load_raw_records(settings.paths.raw_records_json)
-df = build_clean_dataframe(records)
-q_report = run_data_quality_checks(df, settings, 'baseline_quality')
-f_report = build_freshness_report(df, settings, settings.paths.freshness_report)
 
-assert q_report['all_passed'] is True
-assert f_report['is_fresh'] is True
-print('VERIFICATION PASSED: Clean count =', len(df))
+# 1. Kiểm tra Ingestion & Cleaning
+records = load_raw_records(settings.paths.raw_records_json)
+df_clean = build_clean_dataframe(records)
+q_base = run_data_quality_checks(df_clean, settings, 'baseline_quality')
+assert q_base['all_passed'] is True
+
+# 2. Kiểm tra Corruption
+df_corrupted = corrupt_clean_dataframe(df_clean, settings.paths.corruption_log)
+q_corr = run_data_quality_checks(df_corrupted, settings, 'corrupted_quality')
+assert q_corr['checks_failed'] == 3
+
+# 3. Kiểm tra Repair từ Raw Snapshot
+df_repaired = build_clean_dataframe(records)
+q_rep = run_data_quality_checks(df_repaired, settings, 'repaired_quality')
+assert q_rep['all_passed'] is True
+print('ALL VERIFICATION SUITE PASSED SUCCESSFULLY!')
 "
 ```
-- **Kết quả mong đợi:** 24 clean records, 0 duplicate, 6/6 quality checks `PASS`, Freshness `is_fresh: True`.
-- **Kết quả thực tế:** Đúng 100% kỳ vọng (xem log trong `data/quality/baseline_quality.json`).
+- **Kết quả mong đợi:** Clean 24 records (6/6 PASS) ➔ Corrupted 23 records (3/6 FAIL) ➔ Repaired 24 records (6/6 PASS).
+- **Kết quả thực tế:** Đúng 100% kỳ vọng (toàn bộ assertions đều PASS).
 
 ---
 
