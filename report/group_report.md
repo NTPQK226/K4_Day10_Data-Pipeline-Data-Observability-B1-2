@@ -5,7 +5,7 @@
 | Thông tin         | Nội dung                  |
 | ------------------ | -------------------------- |
 | Khóa/Lớp         | K4              |
-| Tên nhóm         | NTPQK226 / Nhóm Day 10 B1-2     |
+| Tên nhóm         | B1-2     |
 | Repository         | `https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability` |
 | Ngày hoàn thành | 2026-08-06               |
 
