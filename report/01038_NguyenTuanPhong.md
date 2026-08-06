@@ -4,10 +4,10 @@
 
 | Thông tin | Nội dung |
 | :--- | :--- |
-| **Họ và tên** | Phong |
-| **MSSV** | 01038 |
+| **Họ và tên** | Nguyễn Tuấn Phong |
+| **MSSV** | 2A202601038 |
 | **Khóa/Lớp** | K4 |
-| **Tên nhóm** | NTPQK226 / Nhóm Day 10 B1-2 |
+| **Tên nhóm** | B1-2 |
 | **Vai trò chính** | **Role 1 — Pipeline Orchestration (Điều phối, Baseline & Corruption Flow)** |
 | **Repository** | `https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability-B1-2` |
 | **Branch** | `phongnt_01038` |
