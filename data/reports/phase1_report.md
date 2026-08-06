@@ -17,10 +17,10 @@
 | Metric | Value |
 |---|---|
 | samples | 18 |
-| retrieval_hit_rate | TBD_CP3 |
-| mean_token_f1 | TBD_CP3 |
-| judge_accuracy | TBD_CP3 |
-| mean_judge_score | TBD_CP3 |
+| retrieval_hit_rate | 1.000 |
+| mean_token_f1 | 1.000 |
+| judge_accuracy | 1.000 |
+| mean_judge_score | 5 |
 
 ## 3. Data Quality
 
