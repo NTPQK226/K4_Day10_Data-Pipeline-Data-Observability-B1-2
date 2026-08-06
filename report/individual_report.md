@@ -149,15 +149,16 @@ print('VERIFICATION PASSED: Clean count =', len(df))
 
 ## 8. Phân tích kết quả
 
-### Metrics chính (Baseline)
+### So sánh tín hiệu Observability & Data Quality qua 3 trạng thái:
 
-| Metric/signal | Baseline | Corrupted | Repaired | Nhận xét của cá nhân |
+| Metric / Tín hiệu | Baseline (Gốc) | Corrupted (Lỗi kiểm soát) | Repaired (Phục hồi từ Raw) | Nhận xét chi tiết |
 | :--- | :---: | :---: | :---: | :--- |
-| `retrieval_hit_rate` | **1.000** | *(Giai đoạn sau)* | *(Giai đoạn sau)* | Retrieval đạt độ chính xác tuyệt đối nhờ `text_for_embedding` chuẩn |
-| `mean_token_f1` | **0.85+** | *(Giai đoạn sau)* | *(Giai đoạn sau)* | Câu trả lời của agent bám sát nội dung abstract |
-| `judge_accuracy` | **1.000** | *(Giai đoạn sau)* | *(Giai đoạn sau)* | LLM Judge đánh giá đạt yêu cầu chất lượng |
-| `Quality checks` | **6/6 PASS** | *(Giai đoạn sau)* | *(Giai đoạn sau)* | 100% dữ liệu đạt chuẩn schema & độ dài |
-| `Freshness status` | **FRESH (100%)** | *(Giai đoạn sau)* | *(Giai đoạn sau)* | Toàn bộ 24 bài báo đều thuộc năm 2026, stale ratio = 0.0% |
+| **Row count** | **24 records** | **23 records** (Drop 3, Add 2 dup) | **24 records** | Khôi phục 100% số lượng records từ snapshot gốc |
+| **Quality Checks** | **6/6 PASS (100%)** | **3/6 PASS (3 FAILED)** | **6/6 PASS (100%)** | CP5 kích hoạt fail đúng 3 gate (`paper_id_unique`, `summary_not_blank`, `freshness_age_days`). Repaired vượt qua toàn bộ |
+| **Freshness Status** | **FRESH (100%)** | **STALE (52.2% stale)** | **FRESH (100%)** | CP5 đẩy stale date về 2018; Repaired phục hồi date 2026 với `stale_ratio = 0.0%` |
+| **Duplicate IDs** | **0** | **2** | **0** | Không còn hiện tượng trùng lặp khóa chính |
+| **Blank Abstracts** | **0** | **2** | **0** | Đã khôi phục toàn bộ abstract đầy đủ |
+| **Raw Lineage** | Độc lập từ API | Độc lập (`papers_clean_corrupted`) | Tái tạo từ `crossref_records.json` | Minh chứng Self-healing khả thi nhờ kiến trúc Raw-first |
 
 ---
 
