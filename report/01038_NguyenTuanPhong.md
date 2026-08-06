@@ -6,7 +6,7 @@
 | :--- | :--- |
 | **Họ và tên** | Nguyễn Tuấn Phong |
 | **MSSV** | 2A202601038 |
-| **Khóa/Lớp** | K4 |
+| **Khóa/Lớp** | K4/E403 |
 | **Tên nhóm** | B1-2 |
 | **Vai trò chính** | **Role 1 — Pipeline Orchestration (Điều phối, Baseline & Corruption Flow)** |
 | **Repository** | https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability-B1-2 |
