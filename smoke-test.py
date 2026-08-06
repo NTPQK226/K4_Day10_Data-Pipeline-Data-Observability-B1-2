@@ -1,4 +1,3 @@
-uv run python -c "
 import pandas as pd
 from core.config import load_settings
 from retrieval.index import LocalEmbeddingIndex
@@ -13,7 +12,7 @@ index = LocalEmbeddingIndex.build(df, settings)
 
 # 2. Smoke Test 1: Semantic Search
 print('\n[1] TEST SEMANTIC SEARCH:')
-results = index.search('agentic retrieval augmented generation', top_k=2)
+results = index.search('deep RAG and reasoning in large language models', top_k=2)
 for r in results:
     print(f'  - [{r.score:.4f}] {r.paper_id}: {r.title}')
 
@@ -28,4 +27,3 @@ print('\n[3] TEST AGENT QA:')
 agent = build_agent(settings, index)
 answer = run_agent_question(agent, 'What is the main topic of the indexed papers?')
 print('  - Agent Response:', answer[:200], '...')
-"
