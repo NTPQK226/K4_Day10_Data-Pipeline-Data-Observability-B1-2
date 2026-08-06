@@ -40,7 +40,7 @@ def main() -> None:
 
     baseline_metrics = {}
     if settings.paths.baseline_metrics.exists():
-        baseline_metrics = read_json(settings.paths.baseline_metrics).get("summary", {})
+        baseline_metrics = read_json(settings.paths.baseline_metrics)
     else:
         log.warning("Baseline metrics not found at %s; continuing with empty baseline summary.", settings.paths.baseline_metrics)
 
