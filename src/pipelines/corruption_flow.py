@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-import sys
 
 import pandas as pd
 
@@ -15,7 +14,7 @@ from core.utils import read_json, write_csv, write_json
 from evaluation.metrics import evaluate_pipeline
 from ingestion.cleaning import build_clean_dataframe
 from ingestion.corruption import corrupt_clean_dataframe
-from ingestion.crossref import fetch_source_records, load_raw_records
+from ingestion.crossref import fetch_source_records
 from observability.quality import build_freshness_report, run_data_quality_checks
 from observability.reporting import generate_corruption_report
 from retrieval.index import LocalEmbeddingIndex
@@ -164,4 +163,3 @@ if __name__ == "__main__":
     except Exception as exc:
         log.error("Corruption flow failed: %s", exc)
         raise SystemExit(1)
-
