@@ -1,14 +1,13 @@
 # Day 10 - Data Pipeline & Data Observability
 
-## Thành Viên Nhóm
+### Thành viên và phân công
 
-
-| # | Họ và tên              | MSSV        | Vai trò                                   | Phụ trách chính                                                                                                                                                                          |
-| - | ------------------------- | ----------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | **Nguyễn Tuấn Phong**   | 2A202601038 | **Role 1 — Team Leader & RAG Architect**  | Điều phối tiến độ; ghép code tổng hợp (supervisor.py & Task 9 — Retrieval Pipeline); kiểm tra công thức RRF (k=60); trình bày tổng quan kiến trúc RAG                     |
-| 2 | **Nguyễn Tuấn Dương** | 2A202601966 | **Role 2 — Data & Pipeline Specialist**   | Task 4, 7 — Chunking (CHUNK_SIZE=800, OVERLAP=100) + ChromaDB indexing với`BAAI/bge-m3`; Task 1 — Thu thập văn bản luật; trả lời câu hỏi kỹ thuật về Hybrid Search & Fallback |
-| 3 | **Nguyễn Hữu Công**    | 2A202601732 | **Role 3 — Frontend & Chatbot Developer** | Task 5, 8, 10 — Semantic search + HyDE;`app.py` (Streamlit UI + câu hỏi gợi ý từ golden_dataset.json); demo live trên lớp; Task 8 — PageIndex Vectorless RAG fallback              |
-| 4 | **Tạ Quốc Tuấn**       | 2A202601114 | **Role 4 — Evaluation & QA Engineer**     | Task 6 — BM25 Lexical Search + TF-IDF fallback;`group_project/evaluation/golden_dataset.json` (15 câu); `eval_pipeline.py` (RAGAS + Custom A/B); `results.md`; báo cáo RAGAS            |
+| STT | Họ và tên | MSSV | Vai trò chính | Module/deliverable sở hữu |
+| --: | --- | --- | --- | --- |
+| 1 | Nguyễn Tuấn Phong | 01038 | Role 1 — Pipeline Orchestration | `src/pipelines/phase1.py`, `src/pipelines/corruption_flow.py`, `src/core/config.py`, `src/core/handoff.py`, `src/core/dod.py` |
+| 2 | Nguyễn Hữu Công | 01732 | Role 2 — Data Layer Owner | `src/ingestion/crossref.py`, `src/ingestion/cleaning.py`, `src/ingestion/corruption.py`, lineage & repair |
+| 3 | Nguyễn Tuấn Dương | 01966 | Role 3 — RAG & Agent Owner | `src/retrieval/index.py` (LocalEmbeddingIndex), `src/retrieval/agent.py`, 3 ChromaDB collections |
+| 4 | Tạ Quốc Tuấn | 01114 | Role 4 — Evaluation & Observability | `src/evaluation/metrics.py`, `src/observability/quality.py`, `src/observability/reporting.py`, `src/observability/correlation.py`, `src/observability/recovery.py`, `src/evaluation/testset.py` |
 
 ## Mục tiêu bài lab
 
