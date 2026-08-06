@@ -52,14 +52,14 @@ class LocalEmbeddingIndex:
                     "title": row["title"],
                     "content": row["text_for_embedding"],
                     "metadata": {
-                        "paper_id": row["paper_id"],
-                        "title": row["title"],
-                        "published": row["published"],
-                        "authors_joined": row["authors_joined"],
-                        "categories_joined": row["categories_joined"],
-                        "summary": row["summary"],
-                        "abs_url": row["abs_url"],
-                        "pdf_url": row["pdf_url"],
+                        "paper_id": str(row["paper_id"]) if pd.notna(row["paper_id"]) else "",
+                        "title": str(row["title"]) if pd.notna(row["title"]) else "",
+                        "published": str(row["published"]) if pd.notna(row["published"]) else "",
+                        "authors_joined": str(row["authors_joined"]) if pd.notna(row["authors_joined"]) else "",
+                        "categories_joined": str(row["categories_joined"]) if pd.notna(row["categories_joined"]) else "",
+                        "summary": str(row["summary"]) if pd.notna(row["summary"]) else "",
+                        "abs_url": str(row["abs_url"]) if pd.notna(row["abs_url"]) else "",
+                        "pdf_url": str(row["pdf_url"]) if pd.notna(row["pdf_url"]) else "",
                     },
                 }
             )
