@@ -1,17 +1,6 @@
-r"""Phase 1: Baseline pipeline end-to-end (Lead: Phong).
+r"""Phase 1: Baseline pipeline end-to-end.
 
 Run: uv run python script/run_phase1.py
-    hoac: .venv\Scripts\python.exe -m pipelines.phase1
-
-Pseudo-code:
-  1. Load/fetch raw records (tu Crossref hoac snapshot).
-  2. Clean data -> data/clean/papers_clean.{csv,json}.
-  3. Build embedding index -> Chroma papers-baseline.
-  4. Build test set (hoac load neu refresh_test_set=False).
-  5. Evaluate -> baseline_metrics.json + baseline_answers.json.
-  6. Run quality checks -> baseline_quality.json.
-  7. Freshness report -> freshness_report.json.
-  8. Phase1 markdown report -> phase1_report.md.
 """
 from __future__ import annotations
 
@@ -21,7 +10,7 @@ import sys
 import pandas as pd
 
 from core.config import load_settings
-from core.utils import read_json, write_json, write_csv
+from core.utils import read_json, write_csv, write_json
 from evaluation.metrics import evaluate_pipeline
 from evaluation.testset import build_test_set
 from ingestion.cleaning import build_clean_dataframe
@@ -35,7 +24,7 @@ log = logging.getLogger(__name__)
 
 
 def _load_or_build_clean(settings) -> pd.DataFrame:
-    """Load clean CSV neu ton tai, neu khong thi build tu raw."""
+    """Load clean CSV nếu tồn tại, nếu không thì build từ raw."""
     csv_path = settings.paths.clean_csv
     if csv_path.exists():
         log.info("Loading existing clean CSV: %s", csv_path)
@@ -53,7 +42,7 @@ def _load_or_build_clean(settings) -> pd.DataFrame:
 
 
 def _load_or_build_index(settings, df: pd.DataFrame) -> LocalEmbeddingIndex:
-    """Load existing index neu ton tai, neu khong thi build moi."""
+    """Load existing index nếu tồn tại, nếu không thì build mới."""
     manifest_path = settings.paths.embeddings_json
     if manifest_path.exists():
         log.info("Loading existing embedding manifest: %s", manifest_path)
@@ -70,7 +59,7 @@ def _load_or_build_index(settings, df: pd.DataFrame) -> LocalEmbeddingIndex:
 
 
 def _load_or_build_test_set(settings, df: pd.DataFrame):
-    """Load existing test set neu refresh_test_set=False."""
+    """Load existing test set nếu refresh_test_set=False."""
     path = settings.paths.eval_testset
     if not settings.refresh_test_set and path.exists():
         log.info("Loading existing test set: %s", path)
@@ -83,7 +72,7 @@ def main() -> None:
     log.info("=== Phase 1: Baseline Pipeline ===")
     settings = load_settings()
 
-    # 1. Raw records (fetch hoac load snapshot)
+    # 1. Raw records (fetch hoặc load snapshot)
     log.info("[Step 1] Fetching/loading raw records...")
     records = fetch_source_records(settings)
     log.info("  Raw records: %d", len(records))

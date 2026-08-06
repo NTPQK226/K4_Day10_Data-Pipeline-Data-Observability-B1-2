@@ -1,0 +1,46 @@
+{
+  "report_name": "corrupted_quality",
+  "total_rows": 23,
+  "checks_total": 6,
+  "checks_passed": 3,
+  "checks_failed": 3,
+  "all_passed": false,
+  "checks": [
+    {
+      "check": "row_count",
+      "value": 23,
+      "passed": true,
+      "detail": "23 rows in dataset"
+    },
+    {
+      "check": "paper_id_not_null",
+      "value": 0,
+      "passed": true,
+      "detail": "0 rows with null paper_id"
+    },
+    {
+      "check": "paper_id_unique",
+      "value": 2,
+      "passed": false,
+      "detail": "2 duplicate paper_id rows"
+    },
+    {
+      "check": "title_not_null",
+      "value": 0,
+      "passed": true,
+      "detail": "0 rows with null title"
+    },
+    {
+      "check": "summary_not_blank",
+      "value": 2,
+      "passed": false,
+      "detail": "2 rows with summary shorter than 50 chars"
+    },
+    {
+      "check": "freshness_age_days",
+      "value": 12,
+      "passed": false,
+      "detail": "12 rows (52.2%) older than 180 days"
+    }
+  ]
+}
