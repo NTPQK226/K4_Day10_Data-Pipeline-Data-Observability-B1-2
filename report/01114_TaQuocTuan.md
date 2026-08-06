@@ -5,12 +5,12 @@
 | Thông tin         | Nội dung |
 | ------------------ | --------- |
 | **Họ và tên**   | Tạ Quốc Tuấn |
-| **MSSV**           | 01114 |
+| **MSSV**           | 2A202601114 |
 | **Khóa/Lớp**     | K4 |
-| **Tên nhóm**     | NTPQK226 / Nhóm Day 10 B1-2 |
+| **Tên nhóm**     | B1-2 |
 | **Vai trò chính** | **Role 4 — Evaluation & Observability Owner** |
-| **Repository**     | `https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability` |
-| **Branch**         | `Role4_CP5` |
+| **Repository**     | `https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability-B1-2` |
+| **Branch**         | `Role4_xxx` |
 | **Ngày hoàn thành** | 2026-08-06 |
 
 ---
