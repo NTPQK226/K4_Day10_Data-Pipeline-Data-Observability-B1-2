@@ -5,9 +5,9 @@
 | Thông tin | Nội dung |
 | :--- | :--- |
 | **Họ và tên** | Nguyễn Hữu Công |
-| **MSSV** | 01732 |
+| **MSSV** | 2A202601732 |
 | **Khóa/Lớp** | K4 |
-| **Tên nhóm** | NTPQK226 / Nhóm Day 10 B1-2 |
+| **Tên nhóm** | B1-2 |
 | **Vai trò chính** | **Role 2 — Data Layer Owner (Ingestion, Cleaning, Corruption, Lineage & Recovery)** |
 | **Repository** | `https://github.com/NTPQK226/K4_Day10_Data-Pipeline-Data-Observability-B1-2` |
 | **Ngày hoàn thành** | 2026-08-06 |
