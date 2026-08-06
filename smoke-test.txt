@@ -1,0 +1,31 @@
+uv run python -c "
+import pandas as pd
+from core.config import load_settings
+from retrieval.index import LocalEmbeddingIndex
+from retrieval.agent import build_agent, run_agent_question
+
+settings = load_settings()
+
+# 1. Load Clean Data & Build Index
+df = pd.read_csv(settings.paths.clean_csv)
+print(f'--> Loaded {len(df)} clean papers.')
+index = LocalEmbeddingIndex.build(df, settings)
+
+# 2. Smoke Test 1: Semantic Search
+print('\n[1] TEST SEMANTIC SEARCH:')
+results = index.search('agentic retrieval augmented generation', top_k=2)
+for r in results:
+    print(f'  - [{r.score:.4f}] {r.paper_id}: {r.title}')
+
+# 3. Smoke Test 2: Exact Lookup
+print('\n[2] TEST EXACT LOOKUP:')
+sample_id = df.iloc[0]['paper_id']
+found = index.lookup(sample_id)
+print(f'  - Lookup ID {sample_id}:', 'FOUND' if found else 'NOT FOUND')
+
+# 4. Smoke Test 3: Agent Question Answer
+print('\n[3] TEST AGENT QA:')
+agent = build_agent(settings, index)
+answer = run_agent_question(agent, 'What is the main topic of the indexed papers?')
+print('  - Agent Response:', answer[:200], '...')
+"
