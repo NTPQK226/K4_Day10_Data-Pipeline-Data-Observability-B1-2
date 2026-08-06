@@ -5,7 +5,7 @@
 | Thông tin         | Nội dung                  |
 | ------------------ | -------------------------- |
 | Họ và tên       | Nguyễn Tuấn Dương             |
-| MSSV               | 01966                     |
+| MSSV               | 2A202601966                     |
 | Khóa/Lớp         | K4              |
 | Tên nhóm         | B1-2     |
 | Vai trò chính    | Role 3 - RAG & Agent Owner                 |
